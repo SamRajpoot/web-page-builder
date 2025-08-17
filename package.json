@@ -4,8 +4,9 @@
   "description": "A comprehensive, visual drag-and-drop web page builder that enables users to create responsive websites without coding knowledge. Built with React, featuring real-time preview, component management, and clean code export.",
   "main": "babel.config.js",
   "scripts": {
-    "dev": "nodemon server.js",
-    "start": "node server.js"
+    "start": "webpack serve --mode development --open",
+    "build": "webpack --mode production",
+    "dev": "webpack serve --mode development --open"
   },
   "keywords": [],
   "author": "",
@@ -16,9 +17,12 @@
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
-    "@babel/preset-env": "^7.0.0",
-    "@babel/preset-react": "^7.0.0",
+    "@babel/preset-env": "^7.28.3",
+    "@babel/preset-react": "^7.27.1",
     "babel-loader": "^9.0.0",
+    "css-loader": "^7.1.2",
+    "html-webpack-plugin": "^5.6.4",
+    "style-loader": "^4.0.0",
     "webpack": "^5.0.0",
     "webpack-cli": "^5.0.0",
     "webpack-dev-server": "^5.2.2"
