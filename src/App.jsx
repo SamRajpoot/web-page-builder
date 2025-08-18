@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+
 import Sidebar from "./components/Sidebar";
 import Canvas from "./components/Canvas";
 import LayersPanel from "./components/LayersPanel";
 import PreviewPanel from "./components/PreviewPanel";
+import ExportPanel from "./components/ExportPanel";
 import { BuilderProvider } from "./context/BuilderContext";
 import "./styles.css";
 
@@ -127,25 +129,41 @@ const App = () => {
 	   <ErrorBoundary>
 		   <AnimatedBackground />
 		   <BuilderProvider>
-			   <div className="app-container">
-				   <Sidebar />
-				   <LayersPanel />
-				   <div
-					   style={{
-						   flex: 1,
-						   display: "flex",
-						   flexDirection: "column",
-					   }}
-				   >
-					   <PreviewPanel>
-						   <Canvas />
-					   </PreviewPanel>
-				   </div>
-				   <FloatingActionButton />
-			   </div>
+			   <BuilderConsumerUI />
 		   </BuilderProvider>
 	   </ErrorBoundary>
    );
 };
+
+import { useBuilder } from "./context/BuilderContext";
+
+function BuilderConsumerUI() {
+   const { dispatch } = useBuilder();
+   return (
+	   <div className="app-container">
+		   <Sidebar />
+		   <LayersPanel />
+		   <div
+			   style={{
+				   flex: 1,
+				   display: "flex",
+				   flexDirection: "column",
+			   }}
+		   >
+			   <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginBottom: 8 }}>
+				   <button onClick={() => dispatch({ type: "UNDO" })} style={{ padding: "6px 18px", borderRadius: 8, background: "#e0e7ff", color: "#3730a3", border: 0, fontWeight: 600, cursor: "pointer" }}>Undo</button>
+				   <button onClick={() => dispatch({ type: "REDO" })} style={{ padding: "6px 18px", borderRadius: 8, background: "#e0e7ff", color: "#3730a3", border: 0, fontWeight: 600, cursor: "pointer" }}>Redo</button>
+			   </div>
+			   <PreviewPanel>
+				   <Canvas />
+			   </PreviewPanel>
+		   </div>
+		   <div style={{ width: 340, background: "#f8fafc", borderLeft: "1.5px solid #e0e7ff", padding: "24px 0", minHeight: "100vh", boxSizing: "border-box" }}>
+			   <ExportPanel />
+		   </div>
+		   <FloatingActionButton />
+	   </div>
+   );
+}
 
 export default App;

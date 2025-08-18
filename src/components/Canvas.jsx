@@ -40,6 +40,7 @@ const Canvas = ({ onSelect, selectedId }) => {
 		} else {
 			updated = [...elements, newElement];
 		}
+		dispatch({ type: "PUSH_HISTORY", payload: updated });
 		dispatch({ type: "SET_ELEMENTS", payload: updated });
 	};
 
@@ -66,7 +67,9 @@ const Canvas = ({ onSelect, selectedId }) => {
 			if (el.children) return { ...el, children: updateTree(el.children) };
 			return el;
 		});
-		dispatch({ type: "SET_ELEMENTS", payload: updateTree(elements) });
+		const updated = updateTree(elements);
+		dispatch({ type: "PUSH_HISTORY", payload: updated });
+		dispatch({ type: "SET_ELEMENTS", payload: updated });
 		setEditingId(null);
 		setEditValue("");
 	};

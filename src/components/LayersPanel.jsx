@@ -15,6 +15,7 @@ const LayersPanel = () => {
 	const handleDrop = (idx) => {
 		if (dragIdx.current === null || dragIdx.current === idx) return;
 		const reordered = reorderTree(elements, dragIdx.current, idx);
+		dispatch({ type: "PUSH_HISTORY", payload: reordered });
 		dispatch({ type: "SET_ELEMENTS", payload: reordered });
 		dragIdx.current = null;
 	};
