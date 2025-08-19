@@ -1,6 +1,7 @@
 // React hook for section CRUD operations
 import { useState, useCallback } from "react";
 import { saveSection, loadSections } from "./index";
+import { templates as staticTemplates } from "../data/templates";
 
 export function useSections() {
   const [sections, setSections] = useState([]);
@@ -14,7 +15,9 @@ export function useSections() {
       const data = await loadSections();
       setSections(data);
     } catch (err) {
-      setError(err.message);
+      // Fallback: use demo templates as sections
+      setSections(staticTemplates.map(t => ({ ...t, id: t.name })));
+      setError("API unavailable, using demo sections.");
     } finally {
       setLoading(false);
     }

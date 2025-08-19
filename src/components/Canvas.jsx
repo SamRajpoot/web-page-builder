@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, Suspense, lazy } from "react";
 import "../styles.css";
 import { useBuilder } from "../context/BuilderContext";
-import SectionElement from "./Elements/SectionElement";
-import ColumnElement from "./Elements/ColumnElement";
+import { FixedSizeList as List } from "react-window";
+const SectionElement = lazy(() => import("./Elements/SectionElement"));
+const ColumnElement = lazy(() => import("./Elements/ColumnElement"));
 import { addElementToTree } from "../utils/treeUtils";
 
 const defaultContent = {
@@ -188,6 +189,13 @@ const Canvas = ({ onSelect, selectedId }) => {
 			);
 	};
 
+		// Virtualized row renderer
+		const Row = ({ index, style }) => (
+			<div style={style}>
+				{renderElement(elements[index])}
+			</div>
+		);
+
 		return (
 			<div
 				className="canvas creative-canvas"
@@ -195,9 +203,19 @@ const Canvas = ({ onSelect, selectedId }) => {
 				onDragOver={(e) => handleDragOver(e, null)}
 				onDragLeave={handleDragLeave}
 				onClick={() => onSelect && onSelect(null)}
+				style={{ position: "relative", overflow: "auto", height: "100%" }}
 			>
 				{elements.length === 0 && <div className="canvas-placeholder">✨ Drag elements here to start building!</div>}
-				{elements.map((el) => renderElement(el))}
+				<Suspense fallback={<div>Loading...</div>}>
+					<List
+						height={600}
+						itemCount={elements.length}
+						itemSize={120}
+						width={"100%"}
+					>
+						{Row}
+					</List>
+				</Suspense>
 			</div>
 		);
 };

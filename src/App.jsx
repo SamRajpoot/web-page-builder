@@ -5,6 +5,8 @@ import Canvas from "./components/Canvas";
 import LayersPanel from "./components/LayersPanel";
 import PreviewPanel from "./components/PreviewPanel";
 import ExportPanel from "./components/ExportPanel";
+import TemplateLibrary from "./components/TemplateLibrary";
+import SectionLibrary from "./components/SectionLibrary";
 import { BuilderProvider } from "./context/BuilderContext";
 import "./styles.css";
 
@@ -138,7 +140,35 @@ const App = () => {
 import { useBuilder } from "./context/BuilderContext";
 
 function BuilderConsumerUI() {
-   const { dispatch } = useBuilder();
+   const { state, dispatch } = useBuilder();
+   const isPreview = state.mode === "preview";
+   // Save current design as template
+   const handleSaveTemplate = () => ({ name: `Template ${Date.now()}`, elements: state.elements });
+   // Load template (replace all elements)
+   const handleLoadTemplate = (template) => {
+	   dispatch({ type: "PUSH_HISTORY", payload: template.elements });
+	   dispatch({ type: "SET_ELEMENTS", payload: template.elements });
+   };
+   // Save current section (first element or selected)
+   const handleSaveSection = () => state.selected ? state.selected : state.elements[0];
+   // Insert section (append to elements)
+   const handleInsertSection = (section) => {
+	   const updated = [...state.elements, section];
+	   dispatch({ type: "PUSH_HISTORY", payload: updated });
+	   dispatch({ type: "SET_ELEMENTS", payload: updated });
+   };
+   if (isPreview) {
+	   // Only show the canvas in preview mode, hide all tools/UI
+	   return (
+		   <div className="app-container" style={{ background: "#fff" }}>
+			   <div style={{ flex: 1, width: "100vw", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+				   <PreviewPanel>
+					   <Canvas />
+				   </PreviewPanel>
+			   </div>
+		   </div>
+	   );
+   }
    return (
 	   <div className="app-container">
 		   <Sidebar />
@@ -154,11 +184,29 @@ function BuilderConsumerUI() {
 				   <button onClick={() => dispatch({ type: "UNDO" })} style={{ padding: "6px 18px", borderRadius: 8, background: "#e0e7ff", color: "#3730a3", border: 0, fontWeight: 600, cursor: "pointer" }}>Undo</button>
 				   <button onClick={() => dispatch({ type: "REDO" })} style={{ padding: "6px 18px", borderRadius: 8, background: "#e0e7ff", color: "#3730a3", border: 0, fontWeight: 600, cursor: "pointer" }}>Redo</button>
 			   </div>
-			   <PreviewPanel>
-				   <Canvas />
-			   </PreviewPanel>
+			   <div style={{ display: "flex", gap: 0, height: "100%" }}>
+				   <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
+					   <PreviewPanel>
+						   <Canvas />
+					   </PreviewPanel>
+				   </div>
+				   <div style={{ width: 280, background: "#e0f2fe", borderLeft: "1.5px solid #bae6fd", display: "flex", flexDirection: "column", alignItems: "stretch", padding: "24px 0 24px 0", boxSizing: "border-box", minHeight: "100vh" }}>
+					   <div style={{ padding: "0 18px 18px 18px", borderBottom: "1.5px solid #bae6fd" }}>
+						   <TemplateLibrary
+							   onLoad={handleLoadTemplate}
+							   currentTemplate={handleSaveTemplate()}
+						   />
+					   </div>
+					   <div style={{ padding: "18px 18px 0 18px", flex: 1, overflowY: "auto" }}>
+						   <SectionLibrary
+							   onInsert={handleInsertSection}
+							   currentSection={handleSaveSection()}
+						   />
+					   </div>
+				   </div>
+			   </div>
 		   </div>
-		   <div style={{ width: 340, background: "#f8fafc", borderLeft: "1.5px solid #e0e7ff", padding: "24px 0", minHeight: "100vh", boxSizing: "border-box" }}>
+		   <div style={{ width: 340, background: "#f8fafc", borderLeft: "1.5px solid #e0e7ff", padding: "24px 0", minHeight: "100vh", boxSizing: "border-box", display: "flex", flexDirection: "column", alignItems: "stretch" }}>
 			   <ExportPanel />
 		   </div>
 		   <FloatingActionButton />

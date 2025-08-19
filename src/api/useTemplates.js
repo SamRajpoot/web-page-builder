@@ -1,6 +1,7 @@
 // React hook for template CRUD operations
 import { useState, useCallback } from "react";
 import { saveTemplate, loadTemplates, loadTemplate } from "./index";
+import { templates as staticTemplates } from "../data/templates";
 
 export function useTemplates() {
   const [templates, setTemplates] = useState([]);
@@ -14,7 +15,9 @@ export function useTemplates() {
       const data = await loadTemplates();
       setTemplates(data);
     } catch (err) {
-      setError(err.message);
+      // Fallback to static demo templates
+      setTemplates(staticTemplates);
+      setError("API unavailable, using demo templates.");
     } finally {
       setLoading(false);
     }

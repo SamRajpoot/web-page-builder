@@ -1,6 +1,9 @@
 // API integration layer for the page builder
 // Update BASE_URL to match your backend
-const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
+let BASE_URL = "http://localhost:5000/api";
+if (typeof process !== "undefined" && process.env && process.env.REACT_APP_API_URL) {
+  BASE_URL = process.env.REACT_APP_API_URL;
+}
 
 export async function apiRequest(path, options = {}) {
   const res = await fetch(`${BASE_URL}${path}`, {

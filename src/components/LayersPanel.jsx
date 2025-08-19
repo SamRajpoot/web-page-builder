@@ -44,7 +44,7 @@ const LayersPanel = () => {
 							border: selected && selected.id === el.id ? "2px solid #818cf8" : "1.5px solid #e0e7ff"
 						}}
 					>
-						{el.type.charAt(0).toUpperCase() + el.type.slice(1)}
+						{el.type && typeof el.type === 'string' ? (el.type.charAt(0).toUpperCase() + el.type.slice(1)) : 'Unknown'}
 					</li>
 				))}
 			</ul>

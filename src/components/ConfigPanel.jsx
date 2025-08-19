@@ -75,7 +75,7 @@ const ConfigPanel = ({ selected, onChange }) => {
 								checked={selected.visibility?.[d] ?? true}
 								onChange={() => handleVisibility(d)}
 							/>
-							{d.charAt(0).toUpperCase() + d.slice(1)}
+							{d && typeof d === 'string' ? (d.charAt(0).toUpperCase() + d.slice(1)) : ''}
 						</label>
 					))}
 				</div>
