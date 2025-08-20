@@ -149,8 +149,15 @@ function BuilderConsumerUI() {
 	   dispatch({ type: "PUSH_HISTORY", payload: template.elements });
 	   dispatch({ type: "SET_ELEMENTS", payload: template.elements });
    };
-   // Save current section (first element or selected)
-   const handleSaveSection = () => state.selected ? state.selected : state.elements[0];
+	 // Save current section (first element or selected), ensure name and elements for backend
+	 const handleSaveSection = () => {
+		 let section = state.selected ? state.selected : state.elements[0];
+		 if (!section) return null;
+		 // If section is a single element, wrap in elements array for backend
+		 if (!section.name) section = { ...section, name: section.type ? section.type.charAt(0).toUpperCase() + section.type.slice(1) + ' Section' : 'Section' };
+		 if (!section.elements) section = { ...section, elements: section.children ? section.children : [section] };
+		 return section;
+	 };
    // Insert section (append to elements)
    const handleInsertSection = (section) => {
 	   const updated = [...state.elements, section];
